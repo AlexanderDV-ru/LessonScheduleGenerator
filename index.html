@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Lesson Schedule Generator</title>
+
+	<style>
+		body {
+			background-color: #333;
+		}
+		textarea {
+			width: 300px;
+			height: 120px;
+		}
+		.maxSize {
+			width: 100%;
+		}
+		.calcKeyboardKey {
+			height: 32px;
+		}
+		.input {
+			width: 99%;
+		}
+		.withoutAnyHorizOffsets {
+			margin-left: 0px;
+			margin-right: 0px;
+			//border-left-width: 0px;
+			//border-right-width: 0px;
+		}
+		.withoutPadding{
+			padding: 0px;
+		}
+		.whiteText{
+			color: white;
+		}
+	</style>
+</head>
+<body>
+	<table>
+		<tr>
+			<td>
+				<label class="whiteText" id="teachersLabel">Teachers</label>
+			</td>
+			<td>
+				<label class="whiteText" id="classesLabel">Classes</label>
+			</td>
+			<td>
+				<label class="whiteText" id="studentsLabel">Students</label>
+			</td>
+			<td>
+				<label class="whiteText" id="daysLabel">Days</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<textarea id="teachersTextarea"></textarea>
+			</td>
+			<td>
+				<textarea id="classesTextarea"></textarea>
+			</td>
+			<td>
+				<textarea id="studentsTextarea"></textarea>
+			</td>
+			<td>
+				<textarea id="daysTextarea"></textarea>
+			</td>
+		</tr>
+	</table>
+	<br>
+	<table style="display: none;">
+		<tr>
+			<td>
+				<textarea readonly id="getSaveJsonArea"></textarea>
+			</td>
+			<td>
+				<textarea id="setSaveJsonArea"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<button id="getSaveJSON">Get save JSON</button>
+			</td>
+			<td>
+				<button id="setSaveJSON">Set save JSON</button>
+				<input id="saveAddress"></input>
+				<button id="saveJSONtoAddress">Save JSON to Address</button>
+				<button id="loadJSONfromAddress">Load JSON from Address</button>
+			</td>
+		</tr>
+	</table>
+	<textarea id="consoleTextarea"></textarea>
+
+	<script src="functions.js"></script>
+	<script src="index.js"></script>
+
+</body>
+</html>
