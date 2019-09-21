@@ -8,6 +8,9 @@
 		body {
 			background-color: #333;
 		}
+		label {
+			color: white;
+		}
 		textarea {
 			width: 300px;
 			height: 120px;
@@ -30,63 +33,43 @@
 		.withoutPadding{
 			padding: 0px;
 		}
-		.whiteText{
-			color: white;
-		}
 	</style>
 </head>
 <body>
-	<table>
-		<tr>
-			<td>
-				<label class="whiteText" id="teachersLabel">Teachers</label>
-			</td>
-			<td>
-				<label class="whiteText" id="subjectsLabel">Subjects</label>
-			</td>
-			<td>
-				<label class="whiteText" id="classesLabel">Classes</label>
-			</td>
-			<td>
-				<label class="whiteText" id="studentsLabel">Students</label>
-			</td>
-			<td>
-				<label class="whiteText" id="daysLabel">Days</label>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<textarea id="teachersTextarea"></textarea>
-			</td>
-			<td>
-				<textarea id="subjectsTextarea"></textarea>
-			</td>
-			<td>
-				<textarea id="classesTextarea"></textarea>
-			</td>
-			<td>
-				<textarea id="studentsTextarea"></textarea>
-			</td>
-			<td>
-				<textarea id="daysTextarea"></textarea>
-			</td>
-		</tr>
+	<table id="editorsTable">
 	</table>
+	<button id="generateLessonsSchedulesButton">Generate Lessons Schedules</button>
 	<table>
 		<tr>
 			<td>
-				<label class="whiteText" id="teachersLessonsSchedulesLabel">Teachers Lessons Schedules</label>
+				<label id="teachersLessonsSchedulesLabel">Teachers Lessons Schedules</label>
+				<br>
+				<input id="teachersLessonsSchedulesTextareaCheckbox" oninput="teachersLessonsSchedulesTextarea.style.display=teachersLessonsSchedulesTextareaCheckbox.checked?'':'none'" type="checkbox">
+				<label id="teachersLessonsSchedulesTextareaCheckboxLabel">JSON-output</label>
+				<input id="teachersLessonsSchedulesTableCheckbox" oninput="teachersLessonsSchedulesTable.style.display=teachersLessonsSchedulesTableCheckbox.checked?'':'none'" type="checkbox">
+				<label id="teachersLessonsSchedulesTableCheckboxLabel">Table-output</label>
+				<br>
+				<textarea style="width: 400px;height: 400px;" id="teachersLessonsSchedulesTextarea"></textarea>
+				<table id="teachersLessonsSchedulesTable"><tr><td><input/></td></tr></table>
+				<script>
+				teachersLessonsSchedulesTextareaCheckbox.oninput()
+				teachersLessonsSchedulesTableCheckbox.oninput()
+				</script>
 			</td>
 			<td>
-				<label class="whiteText" id="classesLessonsSchedulesLabel">Classes Lessons Schedules</label>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<textarea style="width: 500px;height: 600px;" id="teachersLessonsSchedulesTextarea"></textarea>
-			</td>
-			<td>
-				<textarea style="width: 500px;height: 600px;" id="classesLessonsSchedulesTextarea"></textarea>
+				<label id="classesLessonsSchedulesLabel">Classes Lessons Schedules</label>
+				<br>
+				<input id="classesLessonsSchedulesTextareaCheckbox" oninput="classesLessonsSchedulesTextarea.style.display=classesLessonsSchedulesTextareaCheckbox.checked?'':'none'" type="checkbox">
+				<label id="classesLessonsSchedulesTextareaCheckboxLabel">JSON-output</label>
+				<input id="classesLessonsSchedulesTableCheckbox" oninput="classesLessonsSchedulesTable.style.display=classesLessonsSchedulesTableCheckbox.checked?'':'none'" type="checkbox">
+				<label id="classesLessonsSchedulesTableCheckboxLabel">Table-output</label>
+				<br>
+				<textarea style="width: 400px;height: 400px;" id="classesLessonsSchedulesTextarea"></textarea>
+				<table id="classesLessonsSchedulesTable"><tr><td><input/></td></tr></table>
+				<script>
+				classesLessonsSchedulesTextareaCheckbox.oninput()
+				classesLessonsSchedulesTableCheckbox.oninput()
+				</script>
 			</td>
 		</tr>
 	</table>

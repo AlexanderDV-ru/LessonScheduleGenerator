@@ -12,6 +12,48 @@ var defaultProperties = {
 }
 //
 var props = makeClone(defaultProperties)
+var msgs={
+	"ru":{
+		"teachers":"Учителя",
+		"subjects":"Предметы",
+		"classes":"Классы",
+		"students":"Ученики",
+		"days":"Дни",
+		
+		"jsonEditor":"Json-Редактор",
+		"tableEditor":"Табличный Редактор",
+		
+		"teachersLessonsSchedules":"Расписания уроков учителей",
+		"classesLessonsSchedules":"Расписания уроков классов",
+		
+		"jsonOutput":"Json-Вывод",
+		"tableOutput":"Табличный Вывод",
+		
+		"generateLessonsSchedules":"Сгенерировать расписания уроков"
+	},
+	"en":{
+		"teachers":"Teachers",
+		"subjects":"Subjects",
+		"classes":"Classes",
+		"students":"Students",
+		"days":"Days",
+		
+		"jsonEditor":"Json-Editor",
+		"tableEditor":"Table-Editor",
+		
+		"teachersLessonsSchedules":"Teachers' lessons schedules",
+		"classesLessonsSchedules":"Classes' lessons schedules",
+		
+		"jsonOutput":"Json-Output",
+		"tableOutput":"Table-Output",
+		
+		"generateLessonsSchedules":"Generate lessons schedules"
+	}
+}
+var getMsg=function(key, lang)
+{
+	return msgs[lang||'ru'][key]
+}
 
 var propCmdVariants = {
 	"boolean" : {
@@ -19,7 +61,7 @@ var propCmdVariants = {
 			"handler" : function(args, variants, current)
 			{
 				props[prop] = Boolean(args[2]);
-				console.log(123)
+				//console.log(123)
 				return "Property '" + prop + "' successfully setted to " + props[prop] + "!"
 			}
 		},
@@ -105,103 +147,165 @@ var handler=function(args, variants, current)
 		if(match&&match.length==matching)
 		{
 			var ret=((variants[cmdRegExp].handler instanceof Function)?variants[cmdRegExp].handler:handler)(args, variants[cmdRegExp].variants, current+1)
-			console.log(variants[cmdRegExp].handler)
+			//console.log(variants[cmdRegExp].handler)
 			if(ret)
 				return ret
 		}}
 }
 addConsoleElement(consoleTextarea, handler, commands)
 //
-var generateTable=function(name, heads, height, cells)
+//
+var getTableText=function(v)
 {
-	var elements={"getfulltext":function()
-		{
-			var text=""
-			for(var v=0;height+1>v;v++)
-			{
-				for(var v2=0;heads.length>v2;v2++)
-					text+=new Function("return "+name+"Tr"+v+"Cell"+v2+"Input.value")()+(heads.length-1==v2?"":"\t")
-				text+=(height==v?"":"\n")
-			}
-			return text
-		}}
-	var table=document.createElement("table")
-	table.id=name
-	for(var v=0;height+1>v;v++)
+	var text=""
+	var table=document.getElementById(v+"Table")
+	for(var v2=0;table.children.length>v2;v2++)
 	{
-		var tr=document.createElement("tr")
-		tr.id=name+"Tr"+v
-		
-		for(var v2=0;heads.length+1>v2;v2++)
-		{
-			var cell=document.createElement(v==0?"th":"td")
-			cell.id=tr.id+"Cell"+v2
-			
-			var input=document.createElement("input")
-			input.id=cell.id+"Input"
-			input.style.width="100%"
-			input.onkeydown=new Function("e","if(e.key=='ArrowUp')"+name+"Tr"+(v==0?0:v-1)+"Cell"+v2+"Input.focus();if(e.key=='ArrowDown')"+name+"Tr"+(v==height.length?v:v+1)+"Cell"+v2+"Input.focus()")
-			if(v==0/*&&v2!=0*/)
-			{
-				input.value=heads[v2-1]
-				input.style["font-weight"]="bold"
-					
-				var btnAddCol=document.createElement("button")
-				btnAddCol.innerText="+"
-				btnAddCol.style.display="inline"
-				cell.appendChild(btnAddCol)
-				var btnWidthPlus=document.createElement("button")
-				btnWidthPlus.innerText=">"
-				btnWidthPlus.tooltip="Расширить"
-				btnWidthPlus.onclick=new Function(cell.id+".width=(Number(("+cell.id+".width+'').replace('px',''))||100)+20+'px'")
-				cell.appendChild(btnWidthPlus)
-				var btnWidthMinus=document.createElement("button")
-				btnWidthMinus.innerText="<"
-				btnWidthMinus.onclick=new Function(cell.id+".width=(Number(("+cell.id+".width+'').replace('px',''))||100)-20+'px'")
-				cell.appendChild(btnWidthMinus)
-			}
-			if(v!=0&&v2==0)
-			{
-				input.value=v
-				input.style["font-weight"]="bold"
-				input.style.width="55px"
-				input.readOnly=true
-					
-				var btnAddRow=document.createElement("button")
-				//btnAddRow.style.display="inline"
-				btnAddRow.innerText="+"
-				cell.appendChild(btnAddRow)
-			}
-			if(v!=0&&v2!=0)
-				if(cells&&cells[v-1]&&cells[v-1][v2-1])
-					input.value=cells[v-1][v2-1]
-			cell.appendChild(input)
-			
-			
-			tr.appendChild(cell)
-			if(v==0&&v2==0)
-				cell.style.visibility='collapse'
-		}
-		
-		table.appendChild(tr)
+		var tr=document.getElementById(v+"Table"+"Tr"+v2)
+		for(var v3=1;tr.children.length>v3;v3++)
+			text+=document.getElementById(v+"Table"+"Tr"+v2+"Cell"+v3+"Input").value+(tr.children.length-1==v3?"":"\t")
+		text+=(table.children.length-1==v2?"":"\n")
 	}
-	elements.table=table
-	return elements
+	return text
 }
-var teachersTableElements=generateTable("teachersTable",["Учителя","Предметы","","","Классы","","","",""],10, [["Учитель1","Предмет1","Предмет2","","Класс1","Класс2","","","12"]])
-teachersTextarea.parentNode.appendChild(teachersTableElements.table)
-var teachersCheckbox=document.createElement("input")
-teachersCheckbox.type="checkbox"
-teachersCheckbox.oninput=function(){teachersTableElements.table.style.display=teachersCheckbox.checked?'':'none';teachersTextarea.style.display=teachersCheckbox.checked?'none':''}
-teachersCheckbox.oninput()
-teachersTextarea.parentNode.appendChild(teachersCheckbox)
-var teachersCheckboxLabel=document.createElement("label")
-teachersCheckboxLabel.innerText="Табличный редактор"
-teachersCheckboxLabel.style.color="white"
-teachersTextarea.parentNode.appendChild(teachersCheckboxLabel)
-var generateScheduleButton=document.createElement("button")
-generateScheduleButton.innerText="Сгенерировать расписание"
-generateScheduleButton.onclick=function()
+var createCell=function(v, v2, v3)
+{
+	var cell=document.createElement(v==0?"th":"td")
+	document.getElementById(v+"Table"+"Tr"+v2).appendChild(cell)
+	cell.id=v+"Table"+"Tr"+v2+"Cell"+v3
+	
+	if(v2!=0&&v3==0)
+	{
+		var btnAddRow=document.createElement("button")
+		cell.appendChild(btnAddRow)
+		btnAddRow.innerText="+"
+		btnAddRow.title="Добавить новую строку снизу"
+		btnAddRow.onclick=new Function("createTr('"+v+"',"+v+"Table.children.length)")
+	}
+	if(v2==0/*&&v3!=0*/)
+	{
+		var btnWidthMinus=document.createElement("button")
+		cell.appendChild(btnWidthMinus)
+		btnWidthMinus.innerText="<"
+		btnWidthMinus.title="Сузить столбец"
+		btnWidthMinus.onclick=new Function(v+"Table"+"Tr"+v2+"Cell"+v3+".width=(Number(("+v+"Table"+"Tr"+v2+"Cell"+v3+".width+'').replace('px',''))||100)-20+'px'")
+			
+		var btnWidthPlus=document.createElement("button")
+		cell.appendChild(btnWidthPlus)
+		btnWidthPlus.innerText=">"
+		btnWidthPlus.title="Расширить столбец"
+		btnWidthPlus.onclick=new Function(v+"Table"+"Tr"+v2+"Cell"+v3+".width=(Number(("+v+"Table"+"Tr"+v2+"Cell"+v3+".width+'').replace('px',''))||100)+20+'px'")
+		
+		var btnAddCol=document.createElement("button")
+		cell.appendChild(btnAddCol)
+		btnAddCol.innerText="+"
+		btnAddCol.title="Добавить новый столбец справа"
+		btnAddCol.onclick=new Function("for(var v in "+v+"Table.children)createCell('"+v+"',v,"+v3+")")
+	}
+	
+	var input=document.createElement("input")
+	cell.appendChild(input)
+	input.id=v+"Table"+"Tr"+v2+"Cell"+v3+"Input"
+	input.style.width="100%"
+	input.onkeydown=new Function("e","if(e.key=='ArrowUp')"+v+"Table"+"Tr"+(v2==0?v2:v2-1)+"Cell"+v3+"Input.focus();if(e.key=='ArrowDown')"+v+"Table"+"Tr"+(v2==height.length?v2:v2+1)+"Cell"+v3+"Input.focus()")
+	if(v2==0/*&&v3!=0*/)
+	{
+		input.value=heads[v3-1]
+		input.style["font-weight"]="bold"
+	}
+	if(v2!=0&&v3==0)
+	{
+		input.value=v2
+		input.style["font-weight"]="bold"
+		input.style.width="40px"
+		input.readOnly=true
+	}
+	if(v2!=0&&v3!=0)
+		if(cells&&cells[v2-1]&&cells[v2-1][v3-1])
+			input.value=cells[v2-1][v3-1]
+	
+	if(v2==0&&v3==0)
+		cell.style.visibility='collapse'
+}
+var createTr=function(v, v2)
+{
+	var tr=document.createElement("tr")
+	document.getElementById(v+"Table").appendChild(tr)
+	tr.id=v+"Table"+"Tr"+v2
+	
+	for(var v3=0;(v2==0?width+1:document.getElementById(v+"Table"+"Tr"+0).children.length)>v3;v3++)
+		createCell(v, v2, v3)
+}
+for(var v in props.inputData)
+{
+	var tr=document.createElement('tr')
+	editorsTable.appendChild(tr)
+
+	var td=document.createElement("td")
+	tr.appendChild(td)
+	
+	var v=v
+	
+	var label=document.createElement("label")
+	td.appendChild(label)
+	label.id=v+"Label"
+	label.innerText=getMsg(v)
+	
+	td.appendChild(document.createElement("br"))
+	
+	var textareaCheckbox=document.createElement("input")
+	td.appendChild(textareaCheckbox)
+	textareaCheckbox.id=v+"TextareaCheckbox"
+	textareaCheckbox.type="checkbox"
+	textareaCheckbox.oninput=new Function(v+"Textarea.style.display="+v+"TextareaCheckbox.checked?'':'none'")
+	
+	var textareaCheckboxLabel=document.createElement("label")
+	td.appendChild(textareaCheckboxLabel)
+	textareaCheckboxLabel.id=v+"TextareaCheckboxLabel"
+	textareaCheckboxLabel.innerText=getMsg("jsonEditor")
+	
+	var tableCheckbox=document.createElement("input")
+	td.appendChild(tableCheckbox)
+	tableCheckbox.id=v+"TableCheckbox"
+	tableCheckbox.type="checkbox"
+	tableCheckbox.oninput=new Function(v+"Table.style.display="+v+"TableCheckbox.checked?'':'none'")
+	
+	var tableCheckboxLabel=document.createElement("label")
+	td.appendChild(tableCheckboxLabel)
+	tableCheckboxLabel.id=v+"TableCheckboxLabel"
+	tableCheckboxLabel.innerText=getMsg("tableEditor")
+	
+	td.appendChild(document.createElement("br"))
+	
+	var textarea=document.createElement("textarea")
+	td.appendChild(textarea)
+	textarea.id=v+"Textarea"
+	
+	var cells=[v=="teachers"?["Учитель1","Предмет1","Предмет2","","Класс1","Класс2","","12"]:[[]]]
+	var heads=v=="teachers"?[v,"subjects","","","classes","","","hours"]:[v]
+	var width=Math.max(heads.length, cells[0].length)
+	var height=Math.max(4,cells.length)
+	
+	var table=document.createElement("table")
+	td.appendChild(table)
+	table.id=v+"Table"
+	for(var v2=0;height+1>v2;v2++)
+		createTr(v, v2)
+	
+	textareaCheckbox.oninput()
+	tableCheckbox.oninput()
+}
+teachersLessonsSchedulesLabel.innerText=getMsg("teachersLessonsSchedules")
+classesLessonsSchedulesLabel.innerText=getMsg("classesLessonsSchedules")
+
+teachersLessonsSchedulesTextareaCheckboxLabel.innerText=getMsg("jsonOutput")
+teachersLessonsSchedulesTableCheckboxLabel.innerText=getMsg("tableOutput")
+classesLessonsSchedulesTextareaCheckboxLabel.innerText=getMsg("jsonOutput")
+classesLessonsSchedulesTableCheckboxLabel.innerText=getMsg("tableOutput")
+
+generateLessonsSchedulesButton.innerText=getMsg("generateLessonsSchedules")
+
+generateLessonsSchedulesButton.onclick=function()
 {
 	saveTextareas()
 	saveTables()
@@ -210,18 +314,26 @@ generateScheduleButton.onclick=function()
 	
 	updateSchedules()
 }
-document.body.appendChild(generateScheduleButton)
-
+for(var v in props.inputData)
+	this[v+"Textarea"].oninput=function(e)
+	{
+		saveTables()
+		saveTextareas()
+		loadTables()
+		saveJsons()
+		
+		updateSchedules()
+	}
 //
 var loadJsons=function()
 {
 	for(var v in props.inputData)
-		props.inputData[v]=storage["lessonScheduleGenerator.props.inputData."+v]?JSON.parse(storage["lessonScheduleGenerator.props.inputData."+v]):props.inputData[v]
+		props.inputData[v]=storage["lessonScheduleGenerator.props.inputData."+v]&&storage["lessonScheduleGenerator.props.inputData."+v]!='undefined'?JSON.parse(storage["lessonScheduleGenerator.props.inputData."+v]):props.inputData[v]
 }
 var saveJsons=function()
 {
 	for(var v in props.inputData)
-		storage["lessonScheduleGenerator.props.inputData."+v]=props.inputData[v]?JSON.stringify(props.inputData[v]):undefined
+		storage["lessonScheduleGenerator.props.inputData."+v]=props.inputData[v]?JSON.stringify(props.inputData[v]):""
 }
 var loadTextareas=function()
 {
@@ -231,61 +343,79 @@ var loadTextareas=function()
 var saveTextareas=function()
 {
 	for(var v in props.inputData)
-		props.inputData[v]=document.getElementById(v+"Textarea").value?JSON.parse(document.getElementById(v+"Textarea").value):[]
+		props.inputData[v]=document.getElementById(v+"Textarea").value?JSON.parse(document.getElementById(v+"Textarea").value):""
 }
 var loadTables=function()
 {
 	for(var v in props.inputData)
-		;
+		for(var v2 in props.inputData[v])
+		{
+			if(!document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)))
+				createTr(v, (Number(v2)+1))
+			
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+1+"Input").value=props.inputData[v][v2].name
+			if(v!="teachers")
+				continue
+			
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+2+"Input").value=(props.inputData.subjects[props.inputData[v][v2].subjects[0]]||{"name":""}).name
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+3+"Input").value=(props.inputData.subjects[props.inputData[v][v2].subjects[1]]||{"name":""}).name
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+4+"Input").value=(props.inputData.subjects[props.inputData[v][v2].subjects[2]]||{"name":""}).name
+			
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+5+"Input").value=(props.inputData.classes[props.inputData[v][v2].classes[0]]||{"name":""}).name
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+6+"Input").value=(props.inputData.classes[props.inputData[v][v2].classes[1]]||{"name":""}).name
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+7+"Input").value=(props.inputData.classes[props.inputData[v][v2].classes[2]]||{"name":""}).name
+			
+			document.getElementById(v+"Table"+"Tr"+(Number(v2)+1)+"Cell"+8+"Input").value=props.inputData[v][v2].hours
+		}
 }
 var saveTables=function()
 {
 	for(var v in props.inputData)
 	{
-		props.inputData.teachers=[]
+		props.inputData[v]=[]
 		
-		var sb=props.inputData.subjects.length
-		var cl=props.inputData.classes.length
+		var lengths={}
+		for(var v2 in props.inputData)
+			lengths[v2]=props.inputData[v2].length
 		
-		var text=teachersTableElements.getfulltext()
-		for(var v=1;text.split("\n").length>v;v++)
+		var text=getTableText(v)
+		for(var v2=1;text.split("\n").length>v2;v2++)
 		{
-			var sbids=[]
-			var clids=[]
-			for(var v2=1;3>=v2;v2++)
-				if(text.split("\n")[v].split("\t")[v2])
+			var element={}
+			var last=""
+			for(var v3=0;text.split("\n")[v2].split("\t").length>v3;v3++)
+				if(text.split("\n")[0].split("\t")[v3]==v)
+					element.name=text.split("\n")[v2].split("\t")[v3]||element.name
+				else if(text.split("\n")[0].split("\t")[v3]=="hours")
+					element.hours=text.split("\n")[v2].split("\t")[v3]||element.hours
+				else 
 				{
-					var id=undefined
-					if(text.split("\n")[v].split("\t")[v2][0]=="#")
-						id=Number(text.split("\n")[v].split("\t")[v2].substring(1))
-					else for(var v3 in props.inputData.subjects)
-						if(props.inputData.subjects[v3].name==text.split("\n")[v].split("\t")[v2])
-							id=Number(v3)
-					if(typeof id != "number")
+					if(text.split("\n")[0].split("\t")[v3])
 					{
-						props.inputData.subjects.push({"name":text.split("\n")[v].split("\t")[v2]})
-						id=sb++
+						last=text.split("\n")[0].split("\t")[v3]
+						if(!element[last])
+							element[last]=[]
 					}
-					sbids.push(id)
-				}
-			for(var v2=4;7>=v2;v2++)
-				if(text.split("\n")[v].split("\t")[v2])
-				{
-					var id=undefined
-					if(text.split("\n")[v].split("\t")[v2][0]=="#")
-						id=Number(text.split("\n")[v].split("\t")[v2].substring(1))
-					else for(var v3 in props.inputData.classes)
-						if(props.inputData.classes[v3].name==text.split("\n")[v].split("\t")[v2])
-							id=Number(v3)
-					if(typeof id != "number")
+					//console.log(text.split("\n"))
+					//console.log(text.split("\n")[0].split("\t")[v3])
+					if(text.split("\n")[v2].split("\t")[v3])
 					{
-						props.inputData.classes.push({"name":text.split("\n")[v].split("\t")[v2]})
-						id=cl++
+						var id=undefined
+						if(text.split("\n")[v2].split("\t")[v3][0]=="#")
+							id=Number(text.split("\n")[v2].split("\t")[v3].substring(1))
+						else for(var v4 in props.inputData[last])
+							if(props.inputData[last][v4].name==text.split("\n")[v2].split("\t")[v3])
+								id=Number(v4)
+						if(typeof id != "number")
+						{
+							props.inputData[last].push({"name":text.split("\n")[v2].split("\t")[v3]})
+							id=lengths[last]++
+						}
+						element[last].push(id)
 					}
-					clids.push(id)
 				}
-			if(text.split("\n")[v].split("\t")[0])
-				props.inputData.teachers.push({"name":text.split("\n")[v].split("\t")[0],"subjects":sbids,"classes":clids,"hours":text.split("\n")[v].split("\t")[8]})
+			if(element.name)
+				props.inputData[v].push(element)
 		}
 	}
 }
@@ -318,147 +448,69 @@ var generateLessons=function()
 				lessons.push(lessonsByTeachers[v][v2][v3])
 	return lessons
 }
-var ttlt=function()
-{
-	var lessonsByTeachers=generateLessonsByTeachers()
-	var tableByTeachers={}
-	for(var v in lessonsByTeachers)
-	{
-		tableByTeachers[v]={}
-		for(var v2 in days)
-			tableByTeachers[v][v2]=[]
-		var vv=0
-		for(var v2 in lessonsByTeachers[v])
-			for(var v3 in lessonsByTeachers[v][v2])
-				tableByTeachers[v][++vv%days.length].push(lessonsByTeachers[v][v2][v3])
-	}
-	return tableByTeachers
-}
-var tls=function(tableByTeachers)
-{
-	teachersLessonsSchedulesTextarea.value=""
-	var table=tableByTeachers
-	for(var v in table)
-	{
-		teachersLessonsSchedulesTextarea.value+=teachers[v].name+":\n"
-				
-		for(var v2 in table[v])
-		{
-			teachersLessonsSchedulesTextarea.value+=days[v2]+"   \t"
-			for(var v3 in table[v][v2])
-				teachersLessonsSchedulesTextarea.value+=classes[table[v][v2][v3]["class"]].name+" "
-			teachersLessonsSchedulesTextarea.value+="\n"
-		}
-	}
-}
-var cls=function(tableByTeachers)
-{
-	classesLessonsSchedulesTextarea.value=""
-	var table=[]
-	for(var v in tableByTeachers)
-		for(var v2 in tableByTeachers[v])
-			for(var v3 in tableByTeachers[v][v2])
-			{
-				if(!table[tableByTeachers[v][v2][v3]["class"]])
-					table[tableByTeachers[v][v2][v3]["class"]]=[]
-				table[tableByTeachers[v][v2][v3]["class"]][v2]=tableByTeachers[v][v2]
-			}
-	
-	for(var v in table)
-	{
-		classesLessonsSchedulesTextarea.value+=classes[v].name+":\n"
-				
-		for(var v2 in table[v])
-		{
-			classesLessonsSchedulesTextarea.value+=days[v2]+"   \t"
-			for(var v3 in table[v][v2])
-				classesLessonsSchedulesTextarea.value+=teachers[table[v][v2][v3]["teacher"]].name+" "
-			classesLessonsSchedulesTextarea.value+="\n"
-		}
-	}
-}
 var updateSchedules=function()
 {
 	var lessons=generateLessons()
-	var lessonsOfTeachers={}
-	var lessonsOfClasses={}
+	var lessonsOf={"teachers":{},"classes":{}}
 	var addLesson=function(teacher, clas, lesson)
 	{
-		if(!lessonsOfTeachers[teacher])
+		if(!lessonsOf["teachers"][teacher])
 		{
-			lessonsOfTeachers[teacher]=[]
+			lessonsOf["teachers"][teacher]=[]
 			for(var v in props.inputData.days)
-				lessonsOfTeachers[teacher][v]=[]
+				lessonsOf["teachers"][teacher][v]=[]
 		}
-		if(!lessonsOfClasses[clas])
+		if(!lessonsOf["classes"][clas])
 		{
-			lessonsOfClasses[clas]=[]
+			lessonsOf["classes"][clas]=[]
 			for(var v in props.inputData.days)
-				lessonsOfClasses[clas][v]=[]
+				lessonsOf["classes"][clas][v]=[]
 		}
 		var d=0
-		var min=(lessonsOfTeachers[teacher][0].length+1)*(lessonsOfClasses[clas][0].length+1)
+		var min=(lessonsOf["teachers"][teacher][0].length+1)*(lessonsOf["classes"][clas][0].length+1)
 		for(var v in props.inputData.days)
 		{
 			var last=min
-			min=Math.min(min,(lessonsOfTeachers[teacher][v].length+1)*(lessonsOfClasses[clas][v].length+1))
+			min=Math.min(min,(lessonsOf["teachers"][teacher][v].length+1)*(lessonsOf["classes"][clas][v].length+1))
 			if(last!=min)
 				d=Number(v)
 		}
-		var l=Math.max(lessonsOfTeachers[teacher][d].length,lessonsOfClasses[clas][d].length)
-		lessonsOfTeachers[teacher][d][l]=lesson
-		lessonsOfClasses[clas][d][l]=lesson
+		var l=Math.max(lessonsOf["teachers"][teacher][d].length,lessonsOf["classes"][clas][d].length)
+		lessonsOf["teachers"][teacher][d][l]=lesson
+		lessonsOf["classes"][clas][d][l]=lesson
 	}
 	for(var v in lessons)
 	{
-		console.log(v, lessons[v])
+		//console.log(v, lessons[v])
 		addLesson(lessons[v].teacher, lessons[v].clas, v)
 	}
-		
-	teachersLessonsSchedulesTextarea.value=""
-	for(var v in lessonsOfTeachers)
+	
+	for(var v0 in {"teachers":"","classes":""})
 	{
-		teachersLessonsSchedulesTextarea.value+=props.inputData.teachers[v].name+":\n"
-		for(var v2=0;lessonsOfTeachers[v].length>v2;v2++)
+		this[v0+"LessonsSchedulesTextarea"].value=""
+		for(var v in lessonsOf[v0])
 		{
-			teachersLessonsSchedulesTextarea.value+="  "+props.inputData.days[v2]+": "
-			for(var v3=0;lessonsOfTeachers[v][v2].length>v3;v3++)
-				teachersLessonsSchedulesTextarea.value+=props.inputData.classes[lessons[lessonsOfTeachers[v][v2][v3]].clas].name+" "
-			teachersLessonsSchedulesTextarea.value+="\n"
+			this[v0+"LessonsSchedulesTextarea"].value+=props.inputData[v0][v].name+"\n"
+			for(var v2=0;lessonsOf[v0][v].length>v2;v2++)
+			{
+				this[v0+"LessonsSchedulesTextarea"].value+="\t"+props.inputData.days[v2].name+"\t"
+				//console.log(lessonsOf, v0, v, v2)
+				for(var v3=0;lessonsOf[v0][v][v2].length>v3;v3++)
+					this[v0+"LessonsSchedulesTextarea"].value+=(lessonsOf[v0][v][v2][v3]?props.inputData[{"teachers":"classes","classes":"teachers"}[v0]][lessons[lessonsOf[v0][v][v2][v3]][{"teachers":"clas","classes":"teacher"}[v0]]].name:"---")+"\t"
+				this[v0+"LessonsSchedulesTextarea"].value+="\n"
+			}
 		}
+		var rt="{("+this[v0+"LessonsSchedulesTextarea"].value.replace(/\n/g,")}{(").replace(/\t/g,")(")+")}"
+		//console.log(rt)
+		rt=rt.replace(/[{]/g,"<tr>")
+		//console.log(rt)
+		rt=rt.replace(/[}]/g,"</tr>")
+		//console.log(rt)
+		rt=rt.replace(/[(]/g,"<td><input style='width:100%' value='")
+		//console.log(rt)
+		rt=rt.replace(/[)]/g,"'/></td>")
+		//console.log(rt)
+		this[v0+"LessonsSchedulesTable"].innerHTML=rt
 	}
-	classesLessonsSchedulesTextarea.value=""
-	for(var v in lessonsOfClasses)
-	{
-		classesLessonsSchedulesTextarea.value+=props.inputData.classes[v].name+":\n"
-		for(var v2=0;lessonsOfClasses[v].length>v2;v2++)
-		{
-			classesLessonsSchedulesTextarea.value+="  "+props.inputData.days[v2]+": "
-			for(var v3=0;lessonsOfClasses[v][v2].length>v3;v3++)
-				classesLessonsSchedulesTextarea.value+=(lessonsOfClasses[v][v2][v3]?props.inputData.teachers[lessons[lessonsOfClasses[v][v2][v3]].teacher].name:"---")+" "
-			classesLessonsSchedulesTextarea.value+="\n"
-		}
-	}
-}
-teachersTextarea.oninput=function(e)
-{
-	saveJsons()
-	updateJsons()
-	updateSchedules()
-}
-classesTextarea.oninput=function(e)
-{
-	save()
-}
-subjectsTextarea.oninput=function(e)
-{
-	save()
-}
-studentsTextarea.oninput=function(e)
-{
-	save()
-}
-daysTextarea.oninput=function(e)
-{
-	save()
+	
 }
