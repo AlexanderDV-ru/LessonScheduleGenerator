@@ -1,0 +1,2 @@
+# LessonScheduleGenerator
+This is a program, that automaticly generates lessons shedule, after you'll enter teachers, subjects, classes, and days. This program should facilitate the process of creating a school schedule.
