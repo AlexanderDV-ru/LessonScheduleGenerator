@@ -1,6 +1,17 @@
-//Get objects
+//--- Name: LessonsScheduleGenerator/Vesion: 0.0.6a/Authors: AlexanderDV/Description: Main LessonsScheduleGenerator file. ---
+// --- Start of standard initialization
+// Program info
+var programInfo={
+	"packet" : "lessonsScheduleGenerator",
+	"name" : "Lessons Schedule Generator",
+	"version" : "0.0.6a",
+	"authors" : "AlexanderDV"
+}
+programInfo.title= programInfo.name + " v" + programInfo.version + " by " + programInfo.authors
+document.title=programInfo.title
+// Universal local storage initialization
 var storage = window.localStorage
-// Default props
+// Default properties
 var defaultProperties = {
 	"inputData":{
 		"teachers" : [{"name":"Учитель1","classes":[0],"subjects":[0],"hours":6},  {"name":"Учитель2","classes":[1],"subjects":[1],"hours":6}],
@@ -10,27 +21,10 @@ var defaultProperties = {
 		"days" : ["Понедельник","Вторник","Среда","Четверг",  "Пятница"],
 	}
 }
-//
+// Properties from default properties
 var props = makeClone(defaultProperties)
+// Messages value-by-key for different languages
 var msgs={
-	"ru":{
-		"teachers":"Учителя",
-		"subjects":"Предметы",
-		"classes":"Классы",
-		"students":"Ученики",
-		"days":"Дни",
-		
-		"jsonEditor":"Json-Редактор",
-		"tableEditor":"Табличный Редактор",
-		
-		"teachersLessonsSchedules":"Расписания уроков учителей",
-		"classesLessonsSchedules":"Расписания уроков классов",
-		
-		"jsonOutput":"Json-Вывод",
-		"tableOutput":"Табличный Вывод",
-		
-		"generateLessonsSchedules":"Сгенерировать расписания уроков"
-	},
 	"en":{
 		"teachers":"Teachers",
 		"subjects":"Subjects",
@@ -48,12 +42,34 @@ var msgs={
 		"tableOutput":"Table-Output",
 		
 		"generateLessonsSchedules":"Generate lessons schedules"
+	},
+	"ru":{
+		"teachers":"Учителя",
+		"subjects":"Предметы",
+		"classes":"Классы",
+		"students":"Ученики",
+		"days":"Дни",
+		
+		"jsonEditor":"Json-Редактор",
+		"tableEditor":"Табличный Редактор",
+		
+		"teachersLessonsSchedules":"Расписания уроков учителей",
+		"classesLessonsSchedules":"Расписания уроков классов",
+		
+		"jsonOutput":"Json-Вывод",
+		"tableOutput":"Табличный Вывод",
+		
+		"generateLessonsSchedules":"Сгенерировать расписания уроков"
 	}
 }
+// Messages language initialization by default value
+var messagesLanguage='ru'
+// Function for getting message by key
 var getMsg=function(key, lang)
 {
-	return msgs[lang||'ru'][key]
+	return msgs[lang||messagesLanguage][key]
 }
+// End of standard initialization ---
 
 var propCmdVariants = {
 	"boolean" : {
@@ -61,7 +77,7 @@ var propCmdVariants = {
 			"handler" : function(args, variants, current)
 			{
 				props[prop] = Boolean(args[2]);
-				//console.log(123)
+				// console.log(123)
 				return "Property '" + prop + "' successfully setted to " + props[prop] + "!"
 			}
 		},
@@ -147,7 +163,7 @@ var handler=function(args, variants, current)
 		if(match&&match.length==matching)
 		{
 			var ret=((variants[cmdRegExp].handler instanceof Function)?variants[cmdRegExp].handler:handler)(args, variants[cmdRegExp].variants, current+1)
-			//console.log(variants[cmdRegExp].handler)
+			// console.log(variants[cmdRegExp].handler)
 			if(ret)
 				return ret
 		}}
@@ -182,7 +198,7 @@ var createCell=function(v, v2, v3)
 		btnAddRow.title="Добавить новую строку снизу"
 		btnAddRow.onclick=new Function("createTr('"+v+"',"+v+"Table.children.length)")
 	}
-	if(v2==0/*&&v3!=0*/)
+	if(v2==0/* &&v3!=0 */)
 	{
 		var btnWidthMinus=document.createElement("button")
 		cell.appendChild(btnWidthMinus)
@@ -208,7 +224,7 @@ var createCell=function(v, v2, v3)
 	input.id=v+"Table"+"Tr"+v2+"Cell"+v3+"Input"
 	input.style.width="100%"
 	input.onkeydown=new Function("e","if(e.key=='ArrowUp')"+v+"Table"+"Tr"+(v2==0?v2:v2-1)+"Cell"+v3+"Input.focus();if(e.key=='ArrowDown')"+v+"Table"+"Tr"+(v2==height.length?v2:v2+1)+"Cell"+v3+"Input.focus()")
-	if(v2==0/*&&v3!=0*/)
+	if(v2==0/* &&v3!=0 */)
 	{
 		input.value=heads[v3-1]
 		input.style["font-weight"]="bold"
@@ -236,72 +252,106 @@ var createTr=function(v, v2)
 	for(var v3=0;(v2==0?width+1:document.getElementById(v+"Table"+"Tr"+0).children.length)>v3;v3++)
 		createCell(v, v2, v3)
 }
+var genTbl=function(v, layoutTable, ltr0, ltr1, func)
+{
+	var ltr0td0=document.createElement("td")
+	ltr0.appendChild(ltr0td0)
+	ltr0td0.style["vertical-align"]='top'
+	var ltr0td1=document.createElement("td")
+	ltr0.appendChild(ltr0td1)
+	ltr0td1.style["vertical-align"]='top'
+	
+	ltr0.appendChild(document.createElement("td"))
+	
+	var ltr1td0=document.createElement("td")
+	ltr1.appendChild(ltr1td0)
+	ltr1td0.style["vertical-align"]='top'
+	var ltr1td1=document.createElement("td")
+	ltr1.appendChild(ltr1td1)
+	ltr1td1.style["vertical-align"]='top'
+	ltr1td1.colSpan=2
+	
+	ltr1.appendChild(document.createElement("td"))
+	
+	var label=document.createElement("label")
+	ltr0td0.appendChild(label)
+	label.id=v+"Label"
+	label.innerText=getMsg(v)+":"
+	
+	var textareaCheckbox=document.createElement("input")
+	ltr0td0.appendChild(textareaCheckbox)
+	textareaCheckbox.id=v+"TextareaCheckbox"
+	textareaCheckbox.type="checkbox"
+	textareaCheckbox.oninput=new Function(v+"Textarea.parentNode.style.display="+v+"TextareaCheckbox.checked?'':'none'")
+	
+	var textareaCheckboxLabel=document.createElement("label")
+	ltr0td0.appendChild(textareaCheckboxLabel)
+	textareaCheckboxLabel.id=v+"TextareaCheckboxLabel"
+	textareaCheckboxLabel.innerText=getMsg("jsonEditor")
+	
+	var tableCheckbox=document.createElement("input")
+	ltr0td1.appendChild(tableCheckbox)
+	tableCheckbox.id=v+"TableCheckbox"
+	tableCheckbox.type="checkbox"
+	tableCheckbox.oninput=new Function(v+"Table.parentNode.style.display="+v+"TableCheckbox.checked?'':'none'")
+	
+	var tableCheckboxLabel=document.createElement("label")
+	ltr0td1.appendChild(tableCheckboxLabel)
+	tableCheckboxLabel.id=v+"TableCheckboxLabel"
+	tableCheckboxLabel.innerText=getMsg("tableEditor")
+	
+	var textarea=document.createElement("textarea")
+	ltr1td0.appendChild(textarea)
+	textarea.id=v+"Textarea"
+	
+	var table=document.createElement("table")
+	ltr1td1.appendChild(table)
+	func(table)
+	
+	textareaCheckbox.oninput()
+	tableCheckbox.oninput()
+}
 for(var v in props.inputData)
 {
+	var cells=[v=="teachers"?["Учитель1","Предмет1","Предмет2","","Класс1","Класс2","","12"]:[[]]]
+	var heads=v=="teachers"?[v,"subjects","","","classes","","","hours"]:[v]
+	var width=Math.max(heads.length, cells[0].length)
+	var height=Math.max(4,cells.length)
+	
 	var tr=document.createElement('tr')
 	editorsTable.appendChild(tr)
 
 	var td=document.createElement("td")
 	tr.appendChild(td)
 	
-	var v=v
+	var layoutTable=document.createElement("table")
+	td.appendChild(layoutTable)
 	
-	var label=document.createElement("label")
-	td.appendChild(label)
-	label.id=v+"Label"
-	label.innerText=getMsg(v)
+	var ltr0=document.createElement("tr")
+	layoutTable.appendChild(ltr0)
+	var ltr1=document.createElement("tr")
+	layoutTable.appendChild(ltr1)
 	
-	td.appendChild(document.createElement("br"))
-	
-	var textareaCheckbox=document.createElement("input")
-	td.appendChild(textareaCheckbox)
-	textareaCheckbox.id=v+"TextareaCheckbox"
-	textareaCheckbox.type="checkbox"
-	textareaCheckbox.oninput=new Function(v+"Textarea.style.display="+v+"TextareaCheckbox.checked?'':'none'")
-	
-	var textareaCheckboxLabel=document.createElement("label")
-	td.appendChild(textareaCheckboxLabel)
-	textareaCheckboxLabel.id=v+"TextareaCheckboxLabel"
-	textareaCheckboxLabel.innerText=getMsg("jsonEditor")
-	
-	var tableCheckbox=document.createElement("input")
-	td.appendChild(tableCheckbox)
-	tableCheckbox.id=v+"TableCheckbox"
-	tableCheckbox.type="checkbox"
-	tableCheckbox.oninput=new Function(v+"Table.style.display="+v+"TableCheckbox.checked?'':'none'")
-	
-	var tableCheckboxLabel=document.createElement("label")
-	td.appendChild(tableCheckboxLabel)
-	tableCheckboxLabel.id=v+"TableCheckboxLabel"
-	tableCheckboxLabel.innerText=getMsg("tableEditor")
-	
-	td.appendChild(document.createElement("br"))
-	
-	var textarea=document.createElement("textarea")
-	td.appendChild(textarea)
-	textarea.id=v+"Textarea"
-	
-	var cells=[v=="teachers"?["Учитель1","Предмет1","Предмет2","","Класс1","Класс2","","12"]:[[]]]
-	var heads=v=="teachers"?[v,"subjects","","","classes","","","hours"]:[v]
-	var width=Math.max(heads.length, cells[0].length)
-	var height=Math.max(4,cells.length)
-	
-	var table=document.createElement("table")
-	td.appendChild(table)
-	table.id=v+"Table"
-	for(var v2=0;height+1>v2;v2++)
-		createTr(v, v2)
-	
-	textareaCheckbox.oninput()
-	tableCheckbox.oninput()
+	genTbl(v, layoutTable,ltr0,ltr1, function(table){table.id=v+"Table";for(var v2=0;height+1>v2;v2++)createTr(v, v2)})
 }
-teachersLessonsSchedulesLabel.innerText=getMsg("teachersLessonsSchedules")
-classesLessonsSchedulesLabel.innerText=getMsg("classesLessonsSchedules")
-
-teachersLessonsSchedulesTextareaCheckboxLabel.innerText=getMsg("jsonOutput")
-teachersLessonsSchedulesTableCheckboxLabel.innerText=getMsg("tableOutput")
-classesLessonsSchedulesTextareaCheckboxLabel.innerText=getMsg("jsonOutput")
-classesLessonsSchedulesTableCheckboxLabel.innerText=getMsg("tableOutput")
+var ltr0=document.createElement("tr")
+outputsTable.appendChild(ltr0)
+var ltr1=document.createElement("tr")
+outputsTable.appendChild(ltr1)
+for(var v in {"teachers":"","classes":""})
+{
+	var v=v+"LessonsSchedules"
+		
+	genTbl(v, outputsTable,ltr0,ltr1, function(table)
+	{
+		table.id=v+"Table"
+		var tr1=document.createElement("tr")
+		table.appendChild(tr1)
+		var td1=document.createElement("td")
+		tr1.appendChild(td1)
+		td1.appendChild(document.createElement("input"))
+	})
+}
 
 generateLessonsSchedulesButton.innerText=getMsg("generateLessonsSchedules")
 
@@ -396,8 +446,8 @@ var saveTables=function()
 						if(!element[last])
 							element[last]=[]
 					}
-					//console.log(text.split("\n"))
-					//console.log(text.split("\n")[0].split("\t")[v3])
+					// console.log(text.split("\n"))
+					// console.log(text.split("\n")[0].split("\t")[v3])
 					if(text.split("\n")[v2].split("\t")[v3])
 					{
 						var id=undefined
@@ -481,7 +531,7 @@ var updateSchedules=function()
 	}
 	for(var v in lessons)
 	{
-		//console.log(v, lessons[v])
+		// console.log(v, lessons[v])
 		addLesson(lessons[v].teacher, lessons[v].clas, v)
 	}
 	
@@ -494,22 +544,22 @@ var updateSchedules=function()
 			for(var v2=0;lessonsOf[v0][v].length>v2;v2++)
 			{
 				this[v0+"LessonsSchedulesTextarea"].value+="\t"+props.inputData.days[v2].name+"\t"
-				//console.log(lessonsOf, v0, v, v2)
+				// console.log(lessonsOf, v0, v, v2)
 				for(var v3=0;lessonsOf[v0][v][v2].length>v3;v3++)
 					this[v0+"LessonsSchedulesTextarea"].value+=(lessonsOf[v0][v][v2][v3]?props.inputData[{"teachers":"classes","classes":"teachers"}[v0]][lessons[lessonsOf[v0][v][v2][v3]][{"teachers":"clas","classes":"teacher"}[v0]]].name:"---")+"\t"
 				this[v0+"LessonsSchedulesTextarea"].value+="\n"
 			}
 		}
 		var rt="{("+this[v0+"LessonsSchedulesTextarea"].value.replace(/\n/g,")}{(").replace(/\t/g,")(")+")}"
-		//console.log(rt)
+		// console.log(rt)
 		rt=rt.replace(/[{]/g,"<tr>")
-		//console.log(rt)
+		// console.log(rt)
 		rt=rt.replace(/[}]/g,"</tr>")
-		//console.log(rt)
+		// console.log(rt)
 		rt=rt.replace(/[(]/g,"<td><input style='width:100%' value='")
-		//console.log(rt)
+		// console.log(rt)
 		rt=rt.replace(/[)]/g,"'/></td>")
-		//console.log(rt)
+		// console.log(rt)
 		this[v0+"LessonsSchedulesTable"].innerHTML=rt
 	}
 	

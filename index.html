@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Lesson Schedule Generator</title>
+  	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" charset="UTF-8">
+	<title>Lessons Schedule Generator</title>
+	
+	<script type="text/javascript" src="lib/functions.js"></script>
 
 	<style>
 		body {
@@ -15,23 +17,11 @@
 			width: 300px;
 			height: 120px;
 		}
-		.maxSize {
+		.maxWidth {
 			width: 100%;
 		}
-		.calcKeyboardKey {
-			height: 32px;
-		}
-		.input {
-			width: 99%;
-		}
-		.withoutAnyHorizOffsets {
-			margin-left: 0px;
-			margin-right: 0px;
-			//border-left-width: 0px;
-			//border-right-width: 0px;
-		}
-		.withoutPadding{
-			padding: 0px;
+		.maxHeight {
+			height: 100%;
 		}
 	</style>
 </head>
@@ -39,39 +29,7 @@
 	<table id="editorsTable">
 	</table>
 	<button id="generateLessonsSchedulesButton">Generate Lessons Schedules</button>
-	<table>
-		<tr>
-			<td>
-				<label id="teachersLessonsSchedulesLabel">Teachers Lessons Schedules</label>
-				<br>
-				<input id="teachersLessonsSchedulesTextareaCheckbox" oninput="teachersLessonsSchedulesTextarea.style.display=teachersLessonsSchedulesTextareaCheckbox.checked?'':'none'" type="checkbox">
-				<label id="teachersLessonsSchedulesTextareaCheckboxLabel">JSON-output</label>
-				<input id="teachersLessonsSchedulesTableCheckbox" oninput="teachersLessonsSchedulesTable.style.display=teachersLessonsSchedulesTableCheckbox.checked?'':'none'" type="checkbox">
-				<label id="teachersLessonsSchedulesTableCheckboxLabel">Table-output</label>
-				<br>
-				<textarea style="width: 400px;height: 400px;" id="teachersLessonsSchedulesTextarea"></textarea>
-				<table id="teachersLessonsSchedulesTable"><tr><td><input/></td></tr></table>
-				<script>
-				teachersLessonsSchedulesTextareaCheckbox.oninput()
-				teachersLessonsSchedulesTableCheckbox.oninput()
-				</script>
-			</td>
-			<td>
-				<label id="classesLessonsSchedulesLabel">Classes Lessons Schedules</label>
-				<br>
-				<input id="classesLessonsSchedulesTextareaCheckbox" oninput="classesLessonsSchedulesTextarea.style.display=classesLessonsSchedulesTextareaCheckbox.checked?'':'none'" type="checkbox">
-				<label id="classesLessonsSchedulesTextareaCheckboxLabel">JSON-output</label>
-				<input id="classesLessonsSchedulesTableCheckbox" oninput="classesLessonsSchedulesTable.style.display=classesLessonsSchedulesTableCheckbox.checked?'':'none'" type="checkbox">
-				<label id="classesLessonsSchedulesTableCheckboxLabel">Table-output</label>
-				<br>
-				<textarea style="width: 400px;height: 400px;" id="classesLessonsSchedulesTextarea"></textarea>
-				<table id="classesLessonsSchedulesTable"><tr><td><input/></td></tr></table>
-				<script>
-				classesLessonsSchedulesTextareaCheckbox.oninput()
-				classesLessonsSchedulesTableCheckbox.oninput()
-				</script>
-			</td>
-		</tr>
+	<table id="outputsTable">
 	</table>
 	<br>
 	<table style="display: none;">
@@ -97,7 +55,6 @@
 	</table>
 	<textarea id="consoleTextarea"></textarea>
 
-	<script src="functions.js"></script>
 	<script src="index.js"></script>
 
 </body>
